@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const db = require('./models');
-const { fruit } = require('./models');
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const db = require("./models");
+const { fruit } = require("./models");
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -12,7 +12,7 @@ app.use(cors());
 // bearer token validation function
 const isValidToken = (req) => {
     let token = req.headers.authorization;
-    if (token.startsWith('Bearer ')) {
+    if (token.startsWith("Bearer ")) {
         token = token.split(" ");
         if (token[1] === "jibontabedona") {
             return true;
@@ -23,22 +23,25 @@ const isValidToken = (req) => {
     }
 };
 //add fruit data
-app.post('/addFruit', (req, res) => {
+app.post("/addFruit", (req, res) => {
     if (isValidToken(req)) {
-        fruit.findOne({ where: { fruitName: req.body.fruitName } })
+        fruit
+            .findOne({ where: { fruitName: req.body.fruitName } })
             .then((result) => {
             if (result === null) {
-                fruit.create({
+                fruit
+                    .create({
                     fruitName: req.body.fruitName,
                     fruitImageURL: req.body.fruitImageURL,
                     fruitVitamin: req.body.fruitVitamin,
-                    fruitAvailability: req.body.fruitAvailability
-                }).then((result) => {
+                    fruitAvailability: req.body.fruitAvailability,
+                })
+                    .then((result) => {
                     if (result) {
                         res.send(result);
                     }
                     else {
-                        res.status(400).send('Error in insert new record');
+                        res.status(400).send("Error in insert new record");
                     }
                 });
             }
@@ -52,10 +55,9 @@ app.post('/addFruit', (req, res) => {
     }
 });
 //get all fruits
-app.get('/getAllFruits', (req, res) => {
+app.get("/getAllFruits", (req, res) => {
     if (isValidToken(req)) {
-        fruit.findAll()
-            .then((result) => {
+        fruit.findAll().then((result) => {
             res.send(result);
         });
     }
@@ -64,10 +66,9 @@ app.get('/getAllFruits', (req, res) => {
     }
 });
 //get single fruits
-app.get('/getSingleFruit/:id', (req, res) => {
+app.get("/getSingleFruit/:id", (req, res) => {
     if (isValidToken(req)) {
-        fruit.findOne({ where: req.params })
-            .then((result) => {
+        fruit.findOne({ where: req.params }).then((result) => {
             if (result) {
                 res.send(result);
             }
@@ -81,11 +82,9 @@ app.get('/getSingleFruit/:id', (req, res) => {
     }
 });
 //get single fruit by query example: http://localhost:5000/getSingleFruit?fruitName=apple
-app.get('/getSingleFruit', (req, res) => {
-    console.log(req.query);
+app.get("/getSingleFruit", (req, res) => {
     if (isValidToken(req)) {
-        fruit.findOne({ where: req.query })
-            .then((result) => {
+        fruit.findOne({ where: req.query }).then((result) => {
             if (result) {
                 res.send(result);
             }
@@ -99,11 +98,9 @@ app.get('/getSingleFruit', (req, res) => {
     }
 });
 //get Single fruit by fruit name
-app.get('/getSingleFruitByName/:fruitName', (req, res) => {
-    console.log(req.params);
+app.get("/getSingleFruitByName/:fruitName", (req, res) => {
     if (isValidToken(req)) {
-        fruit.findOne({ where: req.params })
-            .then((result) => {
+        fruit.findOne({ where: req.params }).then((result) => {
             if (result) {
                 res.send(result);
             }
@@ -117,15 +114,21 @@ app.get('/getSingleFruitByName/:fruitName', (req, res) => {
     }
 });
 //delete specific fruit by id
-app.delete('/deleteSingleFruit/:id', (req, res) => {
+app.delete("/deleteSingleFruit/:id", (req, res) => {
     if (isValidToken(req)) {
-        fruit.destroy({ where: req.params })
-            .then((data) => {
-            if (data > 0) {
-                res.send("deleted successfull");
+        fruit.findOne({ where: req.params }).then((result) => {
+            if (result) {
+                fruit.destroy({ where: req.params }).then((data) => {
+                    if (data > 0) {
+                        res.send("deleted successfull");
+                    }
+                    else {
+                        res.send("delete operation failed");
+                    }
+                });
             }
             else {
-                res.send("delete operation failed");
+                res.send("Id not found");
             }
         });
     }
@@ -134,9 +137,10 @@ app.delete('/deleteSingleFruit/:id', (req, res) => {
     }
 });
 //udpate single fruit data
-app.patch('/updateSingleFruit/:id', (req, res) => {
+app.patch("/updateSingleFruit/:id", (req, res) => {
     if (isValidToken(req)) {
-        fruit.update(req.body, { where: { id: req.params.id } })
+        fruit
+            .update(req.body, { where: { id: req.params.id } })
             .then((result) => {
             if (result[0] > 0) {
                 res.send("Update successfull");
