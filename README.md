@@ -1,8 +1,14 @@
 # Fruits CRUD App
 
 ### Editor setup
-> - install dependencies : ```npm install```
-> - Run this command from your terminal : ```npm start```
+> - install dependencies : 
+> ```
+> npm install
+> ```
+> - Run this command from your terminal : 
+> ```
+> npm start
+> ```
 
 ### REST API list:
 > **Bearer TOKEN** ```jibontabedona``` 
